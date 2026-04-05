@@ -1,25 +1,15 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { 
-  TrendingUp, Newspaper, Users, Search, Filter, X, ExternalLink, 
-  Clock, User, Bookmark
+  Newspaper, Search, Filter, X, ExternalLink, Clock, User, Bookmark
 } from 'lucide-react';
-import { TrendFeed } from '@/components/trends/TrendFeed';
-import { GlossarySearch } from '@/components/trends/GlossarySearch';
-import { ArxivFeed } from '@/components/trends/ArxivFeed';
-import { SocialFeed } from '@/components/social/SocialFeed';
-import { LoadingCard } from '@/components/shared/LoadingCard';
-import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { MOCK_NEWS, NEWS_CATEGORIES, NEWS_SOURCES } from '@/data/newsFeeds';
 
-export default function TrendsPage() {
-  const [activeTab, setActiveTab] = useState<'trends' | 'news' | 'community'>('trends');
-  
-  // News state
+export default function NewsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedSource, setSelectedSource] = useState<string>('All');
@@ -70,90 +60,19 @@ export default function TrendsPage() {
   };
 
   return (
-    <div className="container px-4 py-12 md:px-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="container px-4 py-8 md:py-12 md:px-8">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <Badge variant="outline" className="mb-4 border-accent/20 bg-accent/5">
-            <TrendingUp className="mr-2 h-3 w-3" /> AI Hub
+        <div className="mb-6">
+          <Badge variant="outline" className="mb-4 border-primary/20 bg-primary/5">
+            <Newspaper className="mr-2 h-3 w-3" /> AI/ML News
           </Badge>
-          <h1 className="text-4xl font-bold mb-3">AI Trends, News & Community</h1>
-          <p className="text-lg text-muted-foreground">
-            Stay current with the latest AI developments and discussions
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">Daily AI/ML News Digest</h1>
+          <p className="text-base md:text-lg text-muted-foreground">
+            Latest news, research, and updates from the AI/ML community
           </p>
         </div>
 
-        {/* Tabs */}
-        <div className="mb-8 flex gap-2 border-b border-border">
-          <button
-            onClick={() => setActiveTab('trends')}
-            className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'trends'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <TrendingUp className="inline-block h-4 w-4 mr-2" />
-            Trends
-          </button>
-          <button
-            onClick={() => setActiveTab('news')}
-            className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'news'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Newspaper className="inline-block h-4 w-4 mr-2" />
-            News
-          </button>
-          <button
-            onClick={() => setActiveTab('community')}
-            className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'community'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Users className="inline-block h-4 w-4 mr-2" />
-            Community
-          </button>
-        </div>
-
-        {/* Trends Tab */}
-        {activeTab === 'trends' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              <ErrorBoundary>
-                <GlossarySearch />
-              </ErrorBoundary>
-              <div>
-                <h2 className="text-lg font-semibold mb-4">Trending Discussions</h2>
-                <ErrorBoundary>
-                  <TrendFeed />
-                </ErrorBoundary>
-              </div>
-            </div>
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-semibold mb-4">Latest Papers</h2>
-                <ErrorBoundary>
-                  <Suspense fallback={
-                    <div className="space-y-3">
-                      {Array.from({ length: 4 }).map((_, i) => <LoadingCard key={i} lines={2} />)}
-                    </div>
-                  }>
-                    <ArxivFeed />
-                  </Suspense>
-                </ErrorBoundary>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* News Tab */}
-        {activeTab === 'news' && (
-          <>
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <Card className="glass">
@@ -335,17 +254,6 @@ export default function TrendsPage() {
             <p className="text-lg text-muted-foreground">
               No news found. Try adjusting your filters.
             </p>
-          </div>
-        )}
-          </>
-        )}
-
-        {/* Community Tab */}
-        {activeTab === 'community' && (
-          <div className="space-y-6">
-            <ErrorBoundary>
-              <SocialFeed />
-            </ErrorBoundary>
           </div>
         )}
       </div>

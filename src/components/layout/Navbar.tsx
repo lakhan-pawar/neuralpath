@@ -3,16 +3,17 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import { Brain, BookOpen, Briefcase, TrendingUp, MessageSquare, FlaskConical, Network, Sun, Moon, Menu, X, GraduationCap } from 'lucide-react';
+import { Brain, BookOpen, Briefcase, TrendingUp, MessageSquare, FlaskConical, Network, Sun, Moon, Menu, X, GraduationCap, Users, Lightbulb, Rocket, Library, BarChart3, GitCompare, Newspaper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 
 const NAV_LINKS = [
   { href: '/jobs',      label: 'Jobs',         icon: Briefcase },
   { href: '/interview-deep-dives', label: 'Interview Prep', icon: GraduationCap },
-  { href: '/resume-projects',  label: 'Resume Projects',     icon: FlaskConical },
+  { href: '/resume-projects',  label: 'Projects Hub',     icon: FlaskConical },
+  { href: '/insights',  label: 'Insights',     icon: BarChart3 },
   { href: '/sysdesign', label: 'Sys Design',   icon: Network },
-  { href: '/trends',    label: 'Trends',       icon: TrendingUp },
+  { href: '/trends',    label: 'AI Hub',       icon: TrendingUp },
 ];
 
 export function Navbar() {

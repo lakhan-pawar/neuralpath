@@ -1,11 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Brain, Building2, Zap, ArrowRight } from 'lucide-react';
-import { useGemini } from '@/hooks/useGemini';
+import { Building2, Zap, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 interface DesignPattern {
@@ -25,16 +23,6 @@ interface DesignPattern {
 }
 
 export function DesignCard({ pattern }: { pattern: DesignPattern }) {
-  const { response, loading, ask } = useGemini();
-
-  const askGemini = () => {
-    const prompt = pattern.company 
-      ? `Explain ${pattern.company}'s "${pattern.name}" system in depth. Cover: architecture, scalability strategies, key technologies (${pattern.keyTechnologies?.join(', ')}), challenges (${pattern.challenges?.join(', ')}), and how they handle ${pattern.scale}. Provide concrete implementation details and best practices.`
-      : `Explain the "${pattern.name}" AI system design pattern in depth. Cover: when to use it, key tradeoffs, failure modes, and a concrete implementation example. Relate to C# patterns where possible.`;
-    
-    ask(prompt, 'You are a Staff AI Engineer explaining system design patterns to an experienced C# developer. Be detailed and technical.');
-  };
-
   const complexityColor = {
     'Low': 'bg-green-500/10 text-green-500 border-green-500/30',
     'Medium': 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30',
@@ -97,35 +85,18 @@ export function DesignCard({ pattern }: { pattern: DesignPattern }) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-2 pt-2">
-          {pattern.id && (
-            <Link href={`/sysdesign/${pattern.id}`} className="flex-1">
+        {pattern.id && (
+          <div className="pt-2">
+            <Link href={`/sysdesign/${pattern.id}`} className="block">
               <Button 
                 size="sm" 
-                variant="outline" 
+                variant="default" 
                 className="gap-2 text-xs w-full"
               >
-                More Details
+                View Full Details
                 <ArrowRight className="h-3 w-3" />
               </Button>
             </Link>
-          )}
-          <Button 
-            size="sm" 
-            variant="default" 
-            onClick={askGemini} 
-            disabled={loading} 
-            className="gap-2 text-xs flex-1"
-          >
-            <Brain className="h-3 w-3" />
-            {loading ? 'Asking...' : 'Ask AI'}
-          </Button>
-        </div>
-
-        {/* AI Response */}
-        {response && (
-          <div className="text-sm leading-relaxed whitespace-pre-wrap p-4 rounded-lg bg-primary/5 border border-primary/10 max-h-96 overflow-y-auto">
-            {response}
           </div>
         )}
       </CardContent>

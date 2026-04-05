@@ -3,7 +3,6 @@ import { Badge } from '@/components/ui/badge';
 import { Network } from 'lucide-react';
 import { DesignCard } from '@/components/sysdesign/DesignCard';
 import { CloudComparison } from '@/components/sysdesign/CloudComparison';
-import { GeminiDesigner } from '@/components/sysdesign/GeminiDesigner';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { SYSTEM_DESIGNS_PART1 } from '@/data/systemDesigns1';
 import { SYSTEM_DESIGNS_PART2 } from '@/data/systemDesigns2';
@@ -42,35 +41,28 @@ export default function SysDesignPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <div className="grid grid-cols-1 gap-6">
-              {ALL_DESIGNS.map((design) => (
-                <ErrorBoundary key={design.id}>
-                  <DesignCard pattern={{
-                    id: design.id,
-                    name: design.name,
-                    category: design.category,
-                    description: design.description,
-                    components: design.components,
-                    csharpAnalogy: `${design.company} - ${design.complexity} complexity. Scale: ${design.scale}`,
-                    diagram: design.diagram,
-                    company: design.company,
-                    scale: design.scale,
-                    keyTechnologies: design.keyTechnologies,
-                    challenges: design.challenges,
-                    complexity: design.complexity
-                  }} />
-                </ErrorBoundary>
-              ))}
-            </div>
-            <CloudComparison />
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {ALL_DESIGNS.map((design) => (
+              <ErrorBoundary key={design.id}>
+                <DesignCard pattern={{
+                  id: design.id,
+                  name: design.name,
+                  category: design.category,
+                  description: design.description,
+                  components: design.components,
+                  csharpAnalogy: `${design.company} - ${design.complexity} complexity. Scale: ${design.scale}`,
+                  diagram: design.diagram,
+                  company: design.company,
+                  scale: design.scale,
+                  keyTechnologies: design.keyTechnologies,
+                  challenges: design.challenges,
+                  complexity: design.complexity
+                }} />
+              </ErrorBoundary>
+            ))}
           </div>
-          <div>
-            <ErrorBoundary>
-              <GeminiDesigner />
-            </ErrorBoundary>
-          </div>
+          <CloudComparison />
         </div>
       </div>
     </div>
