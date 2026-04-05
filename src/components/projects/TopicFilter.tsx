@@ -2,6 +2,7 @@
 
 import { useAppStore } from '@/store/appStore';
 import type { ProjectTopic } from '@/types/project';
+import { useEffect, useState } from 'react';
 
 const TOPICS: Array<{ value: ProjectTopic | 'all'; label: string }> = [
   { value: 'all', label: 'All' },
@@ -15,6 +16,20 @@ const TOPICS: Array<{ value: ProjectTopic | 'all'; label: string }> = [
 ];
 
 export function TopicFilter() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  return <TopicFilterContent />;
+}
+
+function TopicFilterContent() {
   const { selectedTopic, setSelectedTopic } = useAppStore();
 
   return (

@@ -2,6 +2,7 @@
 
 import { useAppStore } from '@/store/appStore';
 import type { InterviewCategory } from '@/types/interview';
+import { useEffect, useState } from 'react';
 
 const CATEGORIES: Array<{ value: InterviewCategory | 'all'; label: string }> = [
   { value: 'all', label: 'All' },
@@ -14,6 +15,20 @@ const CATEGORIES: Array<{ value: InterviewCategory | 'all'; label: string }> = [
 ];
 
 export function CategoryFilter() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  return <CategoryFilterContent />;
+}
+
+function CategoryFilterContent() {
   const { selectedCategory, setSelectedCategory } = useAppStore();
 
   return (

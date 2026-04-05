@@ -4,20 +4,25 @@ import { searchMuse } from './muse';
 import { searchIndeedCanada } from './indeed';
 import { searchEluta } from './eluta';
 import { searchLinkedIn } from './linkedin';
-import { searchIndeedJobSpy, searchLinkedInJobSpy } from './jobspy';
-
-// Check if JobSpy API is available
-const JOBSPY_ENABLED = !!process.env.JOBSPY_API_URL;
+import { searchLinkedInJobSpy } from './jobspy';
 
 export async function aggregateJobs(filter: JobFilter): Promise<Job[]> {
+  // Check if JobSpy API is available at runtime (only for LinkedIn)
+  const JOBSPY_ENABLED = !!process.env.JOBSPY_API_URL;
+  
+  console.log('=== Job Aggregator Configuration ===');
+  console.log('JobSpy API URL:', process.env.JOBSPY_API_URL);
+  console.log('JobSpy Enabled (LinkedIn only):', JOBSPY_ENABLED);
+  console.log('Indeed: Using RSS feed');
+  console.log('Filter:', filter);
+  
   const query = filter.query || 'AI engineer machine learning';
   const location = filter.location || 'Canada';
 
-  // Use JobSpy for Indeed and LinkedIn if available, otherwise use mock data
-  const indeedPromise = JOBSPY_ENABLED 
-    ? searchIndeedJobSpy(query, location)
-    : searchIndeedCanada(query);
+  // Use RSS feed for Indeed (always)
+  const indeedPromise = searchIndeedCanada(query, location);
     
+  // Use JobSpy for LinkedIn if available, otherwise use mock data
   const linkedInPromise = JOBSPY_ENABLED
     ? searchLinkedInJobSpy(query, location)
     : searchLinkedIn(query);
@@ -72,10 +77,11 @@ export async function aggregateJobs(filter: JobFilter): Promise<Job[]> {
 // Get jobs specifically for Canada
 export async function aggregateCanadianJobs(filter: JobFilter): Promise<Job[]> {
   const query = filter.query || 'AI engineer machine learning';
+  const location = 'Canada';
 
   const results = await Promise.allSettled([
     searchAdzunaCanada(query),
-    searchIndeedCanada(query),
+    searchIndeedCanada(query, location),
     searchEluta(query),
     searchLinkedIn(query),
   ]);

@@ -1,15 +1,15 @@
+'use client';
+
 import type { Metadata } from 'next';
 import { Badge } from '@/components/ui/badge';
 import { Briefcase } from 'lucide-react';
-import { JobFilters } from '@/components/jobs/JobFilters';
-import { JobAggregator } from '@/components/jobs/JobAggregator';
+import dynamic from 'next/dynamic';
 import { GeminiChat } from '@/components/shared/GeminiChat';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 
-export const metadata: Metadata = {
-  title: 'AI Job Finder | NeuralPath',
-  description: 'Live AI Engineering job listings aggregated from multiple sources.',
-};
+// Disable SSR for components that use Zustand persist
+const JobFilters = dynamic(() => import('@/components/jobs/JobFilters').then(mod => ({ default: mod.JobFilters })), { ssr: false });
+const JobAggregator = dynamic(() => import('@/components/jobs/JobAggregator').then(mod => ({ default: mod.JobAggregator })), { ssr: false });
 
 export default function JobsPage() {
   return (
@@ -28,7 +28,6 @@ export default function JobsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <ErrorBoundary>
-              <JobFilters />
               <JobAggregator />
             </ErrorBoundary>
           </div>

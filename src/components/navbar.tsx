@@ -4,13 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Brain, Map, BookOpen, Target, TrendingUp, Menu, X } from "lucide-react";
+import { Brain, Map, BookOpen, Target, TrendingUp, Menu, X, Briefcase } from "lucide-react";
 
 const NAV_LINKS = [
-  { href: "/roadmap", label: "Roadmap", icon: Map },
-  { href: "/skills", label: "Skills", icon: Target },
-  { href: "/glossary", label: "Glossary", icon: BookOpen },
-  { href: "/insights", label: "Insights", icon: TrendingUp },
+  { href: "/jobs", label: "Jobs", icon: Target },
+  { href: "/interview", label: "Interview", icon: BookOpen },
+  { href: "/resume-projects", label: "Resume Projects", icon: Briefcase },
+  { href: "/sysdesign", label: "System Design", icon: Map },
+  { href: "/trends", label: "Trends", icon: TrendingUp },
 ];
 
 export function Navbar() {
@@ -51,9 +52,9 @@ export function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Link href="/learning">
+          <Link href="/glossary">
             <Button size="sm" className="shadow-medium h-11 px-6 text-base font-semibold">
-              Get Started
+              Glossary
             </Button>
           </Link>
         </div>
@@ -91,9 +92,9 @@ export function Navbar() {
               );
             })}
             <div className="pt-4 border-t border-border/70 mt-4">
-              <Link href="/learning" onClick={() => setMobileMenuOpen(false)} className="block">
+              <Link href="/glossary" onClick={() => setMobileMenuOpen(false)} className="block">
                 <Button size="sm" className="w-full h-12 text-base font-semibold">
-                  Get Started
+                  Glossary
                 </Button>
               </Link>
             </div>

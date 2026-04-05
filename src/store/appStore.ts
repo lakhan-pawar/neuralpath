@@ -22,6 +22,10 @@ interface AppState {
   // User prefs
   yearsExperience: number;
   setYearsExperience: (years: number) => void;
+  
+  // Hydration
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -29,7 +33,7 @@ export const useAppStore = create<AppState>()(
     (set) => ({
       jobFilter: {
         query: 'AI engineer',
-        location: '',
+        location: 'canada',
         remote: false,
         seniority: 'all',
         salaryMin: 0,
@@ -46,7 +50,15 @@ export const useAppStore = create<AppState>()(
 
       yearsExperience: 5,
       setYearsExperience: (years) => set({ yearsExperience: years }),
+      
+      _hasHydrated: false,
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
-    { name: 'neuralpath-store' }
+    { 
+      name: 'neuralpath-store',
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
+    }
   )
 );

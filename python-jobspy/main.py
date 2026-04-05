@@ -49,6 +49,8 @@ def search_jobs(
         else:
             sites = ["indeed", "linkedin", "zip_recruiter"]
         
+        print(f"Scraping jobs: query={query}, location={location}, sites={sites}")
+        
         # Scrape jobs
         jobs_df = scrape_jobs(
             site_name=sites,
@@ -60,6 +62,7 @@ def search_jobs(
         )
         
         if jobs_df is None or jobs_df.empty:
+            print(f"No jobs found for query: {query}")
             return {
                 "jobs": [],
                 "count": 0,
@@ -67,6 +70,8 @@ def search_jobs(
                 "location": location,
                 "sites": sites
             }
+        
+        print(f"Found {len(jobs_df)} jobs")
         
         # Convert DataFrame to list of dicts
         jobs_list = []
@@ -99,10 +104,15 @@ def search_jobs(
         }
         
     except Exception as e:
+        print(f"Error scraping jobs: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return {
             "error": str(e),
             "jobs": [],
-            "count": 0
+            "count": 0,
+            "query": query,
+            "location": location
         }
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateInterviewQuestions } from '@/lib/gemini';
+import { generateInterviewQuestionsGroq } from '@/lib/groq';
 
 export const runtime = 'nodejs';
 
@@ -18,8 +18,8 @@ export async function GET(
     
     console.log('Generating interview prep for:', { jobTitle, company, id });
     
-    // Generate job-specific questions using Gemini (30 questions minimum)
-    const interviewPrep = await generateInterviewQuestions(
+    // Generate job-specific questions using Groq
+    const interviewPrep = await generateInterviewQuestionsGroq(
       jobTitle,
       company,
       description

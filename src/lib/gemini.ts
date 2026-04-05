@@ -3,9 +3,9 @@ import type { GeminiRequest } from '@/types/gemini';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-// Using Gemini 2.5 Flash - fastest and cheapest model
+// Using Gemini Pro - stable model that works with v1beta API
 export const geminiModel = genAI.getGenerativeModel({
-  model: 'gemini-2.5-flash',
+  model: 'gemini-pro',
   generationConfig: {
     maxOutputTokens: 2048,
     temperature: 0.7,

@@ -1,11 +1,11 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Building2, Zap, Code, AlertTriangle, Layers, Target, PlayCircle, Brain, Sparkles } from 'lucide-react';
+import { ArrowLeft, Building2, Zap, Code, AlertTriangle, Layers, Target, PlayCircle, Sparkles, Lightbulb } from 'lucide-react';
 import { DiagramViewer } from '@/components/sysdesign/DiagramViewer';
 import { SYSTEM_DESIGNS_PART1 } from '@/data/systemDesigns1';
 import { SYSTEM_DESIGNS_PART2 } from '@/data/systemDesigns2';
@@ -14,13 +14,41 @@ import { HOW_IT_WORKS } from '@/data/howItWorksExplanations';
 
 const ALL_DESIGNS = [...SYSTEM_DESIGNS_PART1, ...SYSTEM_DESIGNS_PART2, ...SYSTEM_DESIGNS_PART3];
 
+// Helper function to parse and format the explanation text
+function parseExplanation(text: string) {
+  // Split by double newlines but keep the ** markers together
+  const sections: Array<{ type: string; heading?: string; content?: string; items?: string[]; key: number }> = [];
+  let currentIdx = 0;
+  
+  // Match each section starting with **
+  const sectionRegex = /\*\*([^*]+)\*\*:\s*([^\n]*(?:\n(?!\*\*)[^\n]*)*)/g;
+  let match;
+  
+  while ((match = sectionRegex.exec(text)) !== null) {
+    const heading = match[1].trim();
+    const content = match[2].trim();
+    
+    // Check if content contains numbered list items
+    if (content.match(/^\d+\.\s+\*\*/m)) {
+      // It's a numbered list
+      const items = content.split(/\n(?=\d+\.\s+\*\*)/).map(item => item.trim()).filter(Boolean);
+      sections.push({ type: 'list', heading, items, key: currentIdx++ });
+    } else {
+      // It's a regular heading with content
+      sections.push({ type: 'heading', heading, content, key: currentIdx++ });
+    }
+  }
+  
+  return sections;
+}
+
 export default function SystemDesignDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { id } = use(params);
-  const [showExplanation, setShowExplanation] = useState(false);
   
   const design = ALL_DESIGNS.find(d => d.id === id);
   const explanation = design ? HOW_IT_WORKS[design.id] : null;
+  const parsedExplanation = explanation ? parseExplanation(explanation) : null;
 
   if (!design) {
     return (
@@ -81,46 +109,76 @@ export default function SystemDesignDetailPage({ params }: { params: Promise<{ i
             {/* How It Works - Hardcoded */}
             <Card className="glass border-primary/40">
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold flex items-center gap-2">
-                    <PlayCircle className="h-6 w-6 text-primary" />
-                    How It Works
-                  </h2>
-                  {explanation && (
-                    <Button 
-                      onClick={() => setShowExplanation(!showExplanation)}
-                      size="sm"
-                      variant="default"
-                      className="gap-2"
-                    >
-                      <Brain className="h-4 w-4" />
-                      {showExplanation ? 'Hide' : 'Show'} Explanation
-                    </Button>
-                  )}
-                </div>
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  <PlayCircle className="h-6 w-6 text-primary" />
+                  How It Works
+                </h2>
               </CardHeader>
               <CardContent>
-                {!showExplanation && (
+                {parsedExplanation ? (
+                  <div className="space-y-6">
+                    {parsedExplanation.map((section) => {
+                      if (section.type === 'heading') {
+                        return (
+                          <div key={section.key} className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <Lightbulb className="h-5 w-5 text-primary shrink-0" />
+                              <h3 className="text-lg font-bold text-primary">{section.heading}</h3>
+                            </div>
+                            <p className="text-base leading-relaxed text-foreground pl-7">
+                              {section.content}
+                            </p>
+                          </div>
+                        );
+                      }
+                      
+                      if (section.type === 'list') {
+                        return (
+                          <div key={section.key} className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <Lightbulb className="h-5 w-5 text-primary shrink-0" />
+                              <h3 className="text-lg font-bold text-primary">{section.heading}</h3>
+                            </div>
+                            <div className="space-y-3 pl-7">
+                              {section.items?.map((item, itemIdx) => {
+                                // Parse numbered items like "1. **Step**: Description"
+                                const itemMatch = item.match(/^(\d+)\.\s*\*\*(.+?)\*\*:\s*([\s\S]+)$/);
+                                if (itemMatch) {
+                                  const [, num, title, desc] = itemMatch;
+                                  return (
+                                    <div key={itemIdx} className="flex gap-3">
+                                      <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-sm shrink-0">
+                                        {num}
+                                      </span>
+                                      <div className="flex-1">
+                                        <p className="font-semibold text-base text-foreground">{title}</p>
+                                        <p className="text-sm text-muted-foreground mt-1">{desc}</p>
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                                return (
+                                  <p key={itemIdx} className="text-base text-foreground">
+                                    {item}
+                                  </p>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      }
+                      
+                      return (
+                        <p key={section.key} className="text-base leading-relaxed text-foreground">
+                          {section.content}
+                        </p>
+                      );
+                    })}
+                  </div>
+                ) : (
                   <div className="text-center py-8">
                     <PlayCircle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-base text-muted-foreground mb-4">
-                      Click "Show Explanation" to see a concise, interview-ready breakdown of how this system works
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Perfect for interview preparation - easy to remember and explain
-                    </p>
-                  </div>
-                )}
-                {showExplanation && explanation && (
-                  <div className="prose prose-sm max-w-none">
-                    <div className="text-base leading-relaxed whitespace-pre-wrap text-foreground">
-                      {explanation}
-                    </div>
-                  </div>
-                )}
-                {showExplanation && !explanation && (
-                  <div className="text-center py-8">
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-base text-muted-foreground">
                       Explanation not available for this system yet.
                     </p>
                   </div>

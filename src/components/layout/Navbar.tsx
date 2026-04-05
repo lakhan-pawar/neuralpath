@@ -3,17 +3,16 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import { Brain, BookOpen, Briefcase, TrendingUp, MessageSquare, FlaskConical, Network, Sun, Moon, Menu, X } from 'lucide-react';
+import { Brain, BookOpen, Briefcase, TrendingUp, MessageSquare, FlaskConical, Network, Sun, Moon, Menu, X, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 
 const NAV_LINKS = [
-  { href: '/learning',  label: 'Learning',    icon: BookOpen },
   { href: '/jobs',      label: 'Jobs',         icon: Briefcase },
-  { href: '/trends',    label: 'Trends',       icon: TrendingUp },
-  { href: '/interview', label: 'Interview',    icon: MessageSquare },
-  { href: '/projects',  label: 'Projects',     icon: FlaskConical },
+  { href: '/interview-deep-dives', label: 'Interview Prep', icon: GraduationCap },
+  { href: '/resume-projects',  label: 'Resume Projects',     icon: FlaskConical },
   { href: '/sysdesign', label: 'Sys Design',   icon: Network },
+  { href: '/trends',    label: 'Trends',       icon: TrendingUp },
 ];
 
 export function Navbar() {

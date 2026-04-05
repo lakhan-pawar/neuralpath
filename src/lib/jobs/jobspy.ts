@@ -9,23 +9,36 @@ export async function searchJobSpy(
 ): Promise<Job[]> {
   try {
     const siteParam = sites.join(',');
-    const url = `${JOBSPY_API_URL}/jobs?query=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}&results_wanted=15&site=${siteParam}`;
+    // Reduced to 10 results to avoid timeouts on Render free tier
+    const url = `${JOBSPY_API_URL}/jobs?query=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}&results_wanted=10&site=${siteParam}`;
     
+    console.log('JobSpy API URL from env:', process.env.JOBSPY_API_URL);
     console.log('Fetching from JobSpy API:', url);
     
+    // Add timeout using AbortController - 60 seconds for Render free tier spin-up
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+    
     const res = await fetch(url, {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      signal: controller.signal,
+      cache: 'no-store', // Don't cache to avoid stale data
       headers: {
         'Accept': 'application/json',
       },
     });
+    
+    clearTimeout(timeoutId);
 
     if (!res.ok) {
       console.error('JobSpy API error:', res.status, res.statusText);
+      const errorText = await res.text().catch(() => 'No error details');
+      console.error('Error details:', errorText);
       return [];
     }
 
     const data = await res.json();
+    
+    console.log('JobSpy response:', data.count, 'jobs from', data.sites);
     
     if (data.error) {
       console.error('JobSpy error:', data.error);
@@ -34,7 +47,11 @@ export async function searchJobSpy(
 
     return data.jobs || [];
   } catch (error) {
-    console.error('JobSpy fetch error:', error);
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.error('JobSpy fetch timeout after 60 seconds - Render service may be spinning up');
+    } else {
+      console.error('JobSpy fetch error:', error);
+    }
     return [];
   }
 }
